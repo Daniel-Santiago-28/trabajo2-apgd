@@ -1,0 +1,3 @@
+# Manifiestos que escribe el productor en cada ejecución
+manifiesto_*.csv
+__pycache__/

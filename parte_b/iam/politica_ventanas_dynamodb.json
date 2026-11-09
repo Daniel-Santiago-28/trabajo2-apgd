@@ -1,0 +1,15 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "EscribirTablasParteB",
+      "Effect": "Allow",
+      "Action": ["dynamodb:PutItem", "dynamodb:GetItem"],
+      "Resource": [
+        "arn:aws:dynamodb:us-east-2:*:table/t2-ventanas",
+        "arn:aws:dynamodb:us-east-2:*:table/t2-eventos-vistos",
+        "arn:aws:dynamodb:us-east-2:*:table/t2-descartados"
+      ]
+    }
+  ]
+}

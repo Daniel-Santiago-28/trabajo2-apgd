@@ -1,0 +1,108 @@
+{
+  "Comment": "Trabajo 2 - Parte A: limpieza y join, y luego dos agregaciones en paralelo",
+  "QueryLanguage": "JSONPath",
+  "StartAt": "LimpiezaYJoin",
+  "States": {
+    "LimpiezaYJoin": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "t2-limpieza-join"
+      },
+      "ResultPath": "$.limpieza",
+      "TimeoutSeconds": 2400,
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.TaskFailed"
+          ],
+          "IntervalSeconds": 30,
+          "MaxAttempts": 1,
+          "BackoffRate": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error",
+          "Next": "PipelineFallido"
+        }
+      ],
+      "Next": "AgregacionesEnParalelo"
+    },
+    "AgregacionesEnParalelo": {
+      "Type": "Parallel",
+      "Branches": [
+        {
+          "StartAt": "VentasPorCategoria",
+          "States": {
+            "VentasPorCategoria": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "t2-rama-ventas-categoria"
+              },
+              "TimeoutSeconds": 1200,
+              "Retry": [
+                {
+                  "ErrorEquals": [
+                    "States.TaskFailed"
+                  ],
+                  "IntervalSeconds": 30,
+                  "MaxAttempts": 1,
+                  "BackoffRate": 2
+                }
+              ],
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "DevolucionesPorSegmento",
+          "States": {
+            "DevolucionesPorSegmento": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "t2-rama-devoluciones-segmento"
+              },
+              "TimeoutSeconds": 1200,
+              "Retry": [
+                {
+                  "ErrorEquals": [
+                    "States.TaskFailed"
+                  ],
+                  "IntervalSeconds": 30,
+                  "MaxAttempts": 1,
+                  "BackoffRate": 2
+                }
+              ],
+              "End": true
+            }
+          }
+        }
+      ],
+      "ResultPath": "$.ramas",
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error",
+          "Next": "PipelineFallido"
+        }
+      ],
+      "Next": "PipelineExitoso"
+    },
+    "PipelineExitoso": {
+      "Type": "Succeed"
+    },
+    "PipelineFallido": {
+      "Type": "Fail",
+      "Error": "GlueJobFailed",
+      "Cause": "Un trabajo de Glue falló después de su reintento"
+    }
+  }
+}
