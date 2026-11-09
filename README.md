@@ -10,6 +10,9 @@ Trabajo 2 · Almacenamiento y Procesamiento de Grandes Datos: procesamiento batc
 | Daniel Santiago Cadavid      | 1000646110 |
 | Luis Camilo Valencia      | 1037670493 |
 
+Link del repositorio: https://github.com/Daniel-Santiago-28/trabajo2-apgd
+Link del video de YouTube: https://youtu.be/fr8hRCsVIrA
+
 - [README](#readme)
   - [Resumen](#resumen)
   - [Las dos partes](#las-dos-partes)
